@@ -1,8 +1,8 @@
-##The road to learn React
+## The road to learn React
 
 - Use `npm start` para rodar o app no [http://localhost:3000] e visualizar o app
 
-####1. Introdução ao React
+#### 1. Introdução ao React
 
 ##### - React
 
