@@ -1,5 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
+import { Component } from "react";
+import { render } from "@testing-library/react";
 
 const list = [
   {
@@ -20,11 +22,19 @@ const list = [
   },
 ];
 
-function App() {
-  return (
-    <div className="App">
-      {list.map((item) => {
-        return (
+class App extends Component {
+  constructor(props) {
+    //sets this.props in constructor
+    super(props);
+    this.list = {
+      list: list,
+    };
+  }
+
+  render() {
+    return (
+      <div className="App">
+        {this.state.list.map((item) => (
           <div key={item.objectID}>
             <span>
               <a href={item.url}>{item.title}</a>
@@ -33,10 +43,29 @@ function App() {
             <span>{item.num_comments}</span>
             <span>{item.points}</span>
           </div>
-        );
-      })}
-    </div>
-  );
+        ))}
+      </div>
+    );
+  }
 }
+
+// function App() {
+//   return (
+//     <div className="App">
+//       {list.map((item) => {
+//         return (
+//           <div key={item.objectID}>
+//             <span>
+//               <a href={item.url}>{item.title}</a>
+//             </span>
+//             <span>{item.author}</span>
+//             <span>{item.num_comments}</span>
+//             <span>{item.points}</span>
+//           </div>
+//         );
+//       })}
+//     </div>
+//   );
+// }
 
 export default App;
