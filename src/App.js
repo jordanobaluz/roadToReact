@@ -21,9 +21,13 @@ const list = [
   },
 ];
 
+//search the term for author or title
 function isSearched(searchTerm) {
   return function (item) {
-    return item.title.toLowerCase().includes(searchTerm.toLowerCase());
+    return (
+      item.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   };
 }
 
