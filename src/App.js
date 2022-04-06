@@ -26,9 +26,25 @@ class App extends Component {
   constructor(props) {
     //sets this.props in constructor
     super(props);
+
     this.list = {
       list: list,
     };
+
+    this.onDismiss = this.onDismiss.bind(this);
+  }
+
+  //remove the item indentified by the id
+  onDismiss(id) {
+    // function isNotId(item) {
+    //   return item.objectID !== id;
+    // }
+    // const updatedList = this.state.list.filter(isNotId);
+    // can do the same inline using arrow function
+    const updatedList = this.state.list.filter((item) => item.objectID !== id);
+
+    //update the list in the local component state
+    this.setState({ list: updatedList });
   }
 
   render() {
@@ -42,6 +58,13 @@ class App extends Component {
             <span>{item.author}</span>
             <span>{item.num_comments}</span>
             <span>{item.points}</span>
+            <span>
+              <button
+                onClick={() => this.onDismiss(item.objectID)}
+                type="button">
+                Dismiss
+              </button>
+            </span>
           </div>
         ))}
       </div>
