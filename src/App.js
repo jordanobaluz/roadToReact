@@ -21,6 +21,12 @@ const list = [
   },
 ];
 
+function isSearched(searchTerm) {
+  return function (item) {
+    return item.title.toLowerCase().includes(searchTerm.toLowerCase());
+  };
+}
+
 class App extends Component {
   constructor(props) {
     //sets this.props in constructor
@@ -28,9 +34,15 @@ class App extends Component {
 
     this.state = {
       list,
+      searchTerm: "",
     };
 
+    this.onSearchChange = this.onSearchChange.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
+  }
+
+  onSearchChange(event) {
+    this.setState({ searchTerm: event.target.value });
   }
 
   //remove the item indentified by the id
@@ -50,29 +62,31 @@ class App extends Component {
     return (
       <div className="App">
         <form>
-          <input type="text" />
+          <input type="text" onChange={this.onSearchChange} />
         </form>
-        {this.state.list.map((item) => {
-          // //define wrapping function outside the method, to pass only the defined function to the handler
-          // const onHandleDismiss = () => this.onDismiss(item.objectID);
-          return (
-            <div key={item.objectID}>
-              <span>
-                <a href={item.url}>{item.title}</a>
-              </span>
-              <span>{item.author}</span>
-              <span>{item.num_comments}</span>
-              <span>{item.points}</span>
-              <span>
-                <button
-                  onClick={() => this.onDismiss(item.objectID)}
-                  type="button">
-                  Dismiss
-                </button>
-              </span>
-            </div>
-          );
-        })}
+        {this.state.list
+          .filter(isSearched(this.state.searchTerm))
+          .map((item) => {
+            // //define wrapping function outside the method, to pass only the defined function to the handler
+            // const onHandleDismiss = () => this.onDismiss(item.objectID);
+            return (
+              <div key={item.objectID}>
+                <span>
+                  <a href={item.url}>{item.title}</a>
+                </span>
+                <span>{item.author}</span>
+                <span>{item.num_comments}</span>
+                <span>{item.points}</span>
+                <span>
+                  <button
+                    onClick={() => this.onDismiss(item.objectID)}
+                    type="button">
+                    Dismiss
+                  </button>
+                </span>
+              </div>
+            );
+          })}
       </div>
     );
   }
