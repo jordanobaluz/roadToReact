@@ -69,15 +69,11 @@ class App extends Component {
 
   //remove the item indentified by the id
   onDismiss(id) {
-    // function isNotId(item) {
-    //   return item.objectID !== id;
-    // }
-    // const updatedList = this.state.list.filter(isNotId);
-    // can do the same inline using arrow function
-    const updatedList = this.state.list.filter((item) => item.objectID !== id);
-
-    //update the list in the local component state
-    this.setState({ list: updatedList });
+    const isNotId = (item) => item.objectID !== id;
+    const updateHits = this.state.result.hits.filter(isNotId);
+    this.setState({
+      result: { ...this.state.result, hits: updateHits },
+    });
   }
 
   render() {
@@ -212,5 +208,17 @@ return (
   </div>
 );
 })} */
+
+// onDismiss(id) {
+//   // function isNotId(item) {
+//   //   return item.objectID !== id;
+//   // }
+//   // const updatedList = this.state.list.filter(isNotId);
+//   // can do the same inline using arrow function
+//   const updatedList = this.state.list.filter((item) => item.objectID !== id);
+
+//   //update the list in the local component state
+//   this.setState({ list: updatedList });
+// }
 
 export default App;
