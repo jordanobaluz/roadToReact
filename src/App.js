@@ -5,6 +5,7 @@ const DEFAULT_QUERY = "redux";
 const PATH_BASE = "https://hn.algolia.com/api/v1";
 const PATH_SEARCH = "/search";
 const PARAM_SEARCH = "query=";
+const PARAM_PAGE = "page=";
 
 // const list = [
 //   {
@@ -52,12 +53,23 @@ class App extends Component {
     this.onDismiss = this.onDismiss.bind(this);
   }
 
+  //concatenate the old and new list of hits from the local stante and new result object
   setSearchTopStories(result) {
-    this.setState({ result });
+    const { hits, page } = result;
+
+    //when 0, it's a new search request from componentDidMount or onSearchSubmit, the hits are empty. But when click the more button fetch paginated data the page isn't 0
+    const oldHits = page !== 0 ? this.state.result.hits : [];
+
+    //merge old and new hits from the recent API request
+    const updateHits = [...oldHits, hits];
+
+    this.setState({ result: { hits: updateHits, page } });
   }
 
-  fetchSearchTopStories(searchTerm) {
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+  fetchSearchTopStories(searchTerm, page = 0) {
+    fetch(
+      `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`
+    )
       .then((response) => response.json())
       .then((result) => this.setSearchTopStories(result))
       .catch((error) => error);
@@ -93,6 +105,7 @@ class App extends Component {
   render() {
     //destructured for the filter and map
     const { searchTerm, result } = this.state;
+    const page = (result && result.page) || 0;
 
     //same as if(result ===null)
     if (!result) {
@@ -112,6 +125,12 @@ class App extends Component {
         {result ? (
           <Table list={result.hits} onDismiss={this.onDismiss} />
         ) : null}
+        <div className="interactions">
+          <Button
+            onClick={() => this.fetchSearchTopStories(searchTerm, page + 1)}>
+            More
+          </Button>
+        </div>
       </div>
     );
   }
