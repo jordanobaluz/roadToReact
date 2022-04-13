@@ -1,40 +1,26 @@
-import "./App.css";
 import React, { Component } from "react";
+import "./App.css";
 
 const DEFAULT_QUERY = "redux";
+const DEFAULT_HPP = "100";
+
 const PATH_BASE = "https://hn.algolia.com/api/v1";
 const PATH_SEARCH = "/search";
 const PARAM_SEARCH = "query=";
 const PARAM_PAGE = "page=";
+const PARAM_HPP = "hitsPerPage=";
 
-// const list = [
-//   {
-//     title: "React",
-//     url: "https://reactjs.org/",
-//     author: "Jordan Walke",
-//     num_comments: 3,
-//     points: 4,
-//     objectID: 0,
-//   },
-//   {
-//     title: "Redux",
-//     url: "https://redux.js.org/",
-//     author: "Dan Abramov, Andrew Clark",
-//     num_comments: 2,
-//     points: 5,
-//     objectID: 1,
-//   },
-// ];
+const largeColumn = {
+  width: "40%",
+};
 
-//search the term for author or title
-function isSearched(searchTerm) {
-  return function (item) {
-    return (
-      item.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  };
-}
+const midColumn = {
+  width: "30%",
+};
+
+const smallColumn = {
+  width: "10%",
+};
 
 class App extends Component {
   constructor(props) {
@@ -68,7 +54,7 @@ class App extends Component {
 
   fetchSearchTopStories(searchTerm, page = 0) {
     fetch(
-      `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`
+      `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`
     )
       .then((response) => response.json())
       .then((result) => this.setSearchTopStories(result))
@@ -144,32 +130,27 @@ const Search = ({ value, onChange, onSubmit, children }) => (
   </form>
 );
 
-class Table extends Component {
-  render() {
-    const { list, onDismiss } = this.props;
-    return (
-      <div className="table">
-        {list.map((item) => (
-          <div key={item.objectID} className="table-row">
-            <span style={{ width: "30%" }}>
-              <a href={item.url}>{item.title}</a>
-            </span>
-            <span style={{ width: "30%" }}>{item.author}</span>
-            <span style={{ width: "10%" }}>{item.num_comments}</span>
-            <span style={{ width: "10%" }}>{item.points}</span>
-            <span style={{ width: "20%" }}>
-              <Button
-                onClick={() => onDismiss(item.objectID)}
-                className="button-inline">
-                Dismiss
-              </Button>
-            </span>
-          </div>
-        ))}
+const Table = ({ list, onDismiss }) => (
+  <div className="table">
+    {list.map((item) => (
+      <div key={item.objectID} className="table-row">
+        <span style={largeColumn}>
+          <a href={item.url}>{item.title}</a>
+        </span>
+        <span style={midColumn}>{item.author}</span>
+        <span style={smallColumn}>{item.num_comments}</span>
+        <span style={smallColumn}>{item.points}</span>
+        <span style={smallColumn}>
+          <Button
+            onClick={() => onDismiss(item.objectID)}
+            className="button-inline">
+            Dismiss
+          </Button>
+        </span>
       </div>
-    );
-  }
-}
+    ))}
+  </div>
+);
 
 class Button extends Component {
   render() {
@@ -261,6 +242,62 @@ return (
 //       </form>
 //     );
 //   }
+// }
+
+// class Table extends Component {
+//   render() {
+//     const { list, onDismiss } = this.props;
+//     return (
+//       <div className="table">
+//         {list.map((item) => (
+//           <div key={item.objectID} className="table-row">
+//             <span style={{ width: "30%" }}>
+//               <a href={item.url}>{item.title}</a>
+//             </span>
+//             <span style={{ width: "30%" }}>{item.author}</span>
+//             <span style={{ width: "10%" }}>{item.num_comments}</span>
+//             <span style={{ width: "10%" }}>{item.points}</span>
+//             <span style={{ width: "20%" }}>
+//               <Button
+//                 onClick={() => onDismiss(item.objectID)}
+//                 className="button-inline">
+//                 Dismiss
+//               </Button>
+//             </span>
+//           </div>
+//         ))}
+//       </div>
+//     );
+//   }
+// }
+
+// const list = [
+//   {
+//     title: "React",
+//     url: "https://reactjs.org/",
+//     author: "Jordan Walke",
+//     num_comments: 3,
+//     points: 4,
+//     objectID: 0,
+//   },
+//   {
+//     title: "Redux",
+//     url: "https://redux.js.org/",
+//     author: "Dan Abramov, Andrew Clark",
+//     num_comments: 2,
+//     points: 5,
+//     objectID: 1,
+//   },
+// ];
+
+//search the term for author or title
+// function isSearched(searchTerm) {
+//   return function (item) {
+//     return (
+//       item.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//       item.title.toLowerCase().includes(searchTerm.toLowerCase())
+//     );
+//   };
 // }
 
 export default App;
