@@ -46,7 +46,9 @@ class App extends Component {
     };
 
     this.setSearchTopStories = this.setSearchTopStories.bind(this);
+    this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
+    this.onSearchSubmit = this.onSearchSubmit.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
   }
 
@@ -54,17 +56,29 @@ class App extends Component {
     this.setState({ result });
   }
 
-  componentDidMount() {
-    const { searchTerm } = this.state;
-
+  fetchSearchTopStories(searchTerm) {
     fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
-      .then((reponse) => reponse.json())
+      .then((response) => response.json())
       .then((result) => this.setSearchTopStories(result))
       .catch((error) => error);
   }
 
+  //called after the render to fetch data from hacker news api
+  componentDidMount() {
+    const { searchTerm } = this.state;
+    this.fetchSearchTopStories(searchTerm);
+  }
+
+  //update the local state with a search term
   onSearchChange(event) {
     this.setState({ searchTerm: event.target.value });
+  }
+
+  //fetches results from api when executing a search
+  onSearchSubmit(event) {
+    const { searchTerm } = this.state;
+    this.fetchSearchTopStories(searchTerm);
+    event.preventDefault();
   }
 
   //remove the item indentified by the id
@@ -88,47 +102,35 @@ class App extends Component {
     return (
       <div className="page">
         <div className="interactions">
-          <Search value={searchTerm} onChange={this.onSearchChange}>
+          <Search
+            value={searchTerm}
+            onChange={this.onSearchChange}
+            onSubmit={this.onSearchSubmit}>
             Search
           </Search>
         </div>
-        <Table
-          list={result.hits}
-          pattern={searchTerm}
-          onDismiss={this.onDismiss}
-        />
+        {result ? (
+          <Table list={result.hits} onDismiss={this.onDismiss} />
+        ) : null}
       </div>
     );
   }
 }
 
-const Search = (props) => {
-  const { value, onChange, children } = props;
-  return (
-    <form>
-      {children} <input type="text" value={value} onChange={onChange} />
-    </form>
-  );
-};
-
-// class Search extends Component {
-//   render() {
-//     const { value, onChange, children } = this.props;
-//     return (
-//       <form>
-//         {children}
-//         <input type="text" value={value} onChange={onChange} />
-//       </form>
-//     );
-//   }
-// }
+//button component for search
+const Search = ({ value, onChange, onSubmit, children }) => (
+  <form onSubmit={onSubmit}>
+    <input type="text" value={value} onChange={onChange} />
+    <button type="submit">{children}</button>
+  </form>
+);
 
 class Table extends Component {
   render() {
-    const { list, pattern, onDismiss } = this.props;
+    const { list, onDismiss } = this.props;
     return (
       <div className="table">
-        {list.filter(isSearched(pattern)).map((item) => (
+        {list.map((item) => (
           <div key={item.objectID} className="table-row">
             <span style={{ width: "30%" }}>
               <a href={item.url}>{item.title}</a>
@@ -219,6 +221,27 @@ return (
 
 //   //update the list in the local component state
 //   this.setState({ list: updatedList });
+// }
+
+// const Search = (props) => {
+//   const { value, onChange, children } = props;
+//   return (
+//     <form>
+//       {children} <input type="text" value={value} onChange={onChange} />
+//     </form>
+//   );
+// };
+
+// class Search extends Component {
+//   render() {
+//     const { value, onChange, children } = this.props;
+//     return (
+//       <form>
+//         {children}
+//         <input type="text" value={value} onChange={onChange} />
+//       </form>
+//     );
+//   }
 // }
 
 export default App;
