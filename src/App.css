@@ -86,8 +86,8 @@ button:hover {
 }
 
 .button-inline {
-  /* border-width: 0;
-  padding: 0; */
+  border-width: 0;
+  padding: 0;
   background: transparent;
   color: inherit;
   text-align: inherit;

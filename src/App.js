@@ -91,10 +91,8 @@ class App extends Component {
   }
 
   render() {
-    //destructured for the filter and map
     const { searchTerm, result } = this.state;
     const page = (result && result.page) || 0;
-
     return (
       <div className="page">
         <div className="interactions">
@@ -147,17 +145,11 @@ const Table = ({ list, onDismiss }) => (
   </div>
 );
 
-class Button extends Component {
-  render() {
-    const { onClick, className = "", children } = this.props;
-
-    return (
-      <button onClick={onClick} className={className} type="button">
-        {children}
-      </button>
-    );
-  }
-}
+const Button = ({ onClick, className = "", children }) => (
+  <button onClick={onClick} className={className} type="button">
+    {children}
+  </button>
+);
 // function App() {
 //   return (
 //     <div className="App">
