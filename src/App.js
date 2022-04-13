@@ -47,9 +47,11 @@ class App extends Component {
     const oldHits = page !== 0 ? this.state.result.hits : [];
 
     //merge old and new hits from the recent API request
-    const updateHits = [...oldHits, hits];
+    const updatedHits = [...oldHits, hits];
 
-    this.setState({ result: { hits: updateHits, page } });
+    this.setState({
+      result: { hits: updatedHits, page },
+    });
   }
 
   fetchSearchTopStories(searchTerm, page = 0) {
@@ -82,9 +84,9 @@ class App extends Component {
   //remove the item indentified by the id
   onDismiss(id) {
     const isNotId = (item) => item.objectID !== id;
-    const updateHits = this.state.result.hits.filter(isNotId);
+    const updatedHits = this.state.result.hits.filter(isNotId);
     this.setState({
-      result: { ...this.state.result, hits: updateHits },
+      result: { ...this.state.result, hits: updatedHits },
     });
   }
 
@@ -92,11 +94,6 @@ class App extends Component {
     //destructured for the filter and map
     const { searchTerm, result } = this.state;
     const page = (result && result.page) || 0;
-
-    //same as if(result ===null)
-    if (!result) {
-      return null;
-    }
 
     return (
       <div className="page">
@@ -108,9 +105,7 @@ class App extends Component {
             Search
           </Search>
         </div>
-        {result ? (
-          <Table list={result.hits} onDismiss={this.onDismiss} />
-        ) : null}
+        {result && <Table list={result.hits} onDismiss={this.onDismiss} />}
         <div className="interactions">
           <Button
             onClick={() => this.fetchSearchTopStories(searchTerm, page + 1)}>
