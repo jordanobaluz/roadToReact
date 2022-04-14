@@ -28,10 +28,13 @@ class App extends Component {
     super(props);
 
     this.state = {
-      result: null,
+      results: null,
+      searchKey: "",
       searchTerm: DEFAULT_QUERY,
+      error: null,
     };
 
+    this.needsToSearchTopStories = this.needsToSearchTopStories.bind(this);
     this.setSearchTopStories = this.setSearchTopStories.bind(this);
     this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -39,18 +42,24 @@ class App extends Component {
     this.onDismiss = this.onDismiss.bind(this);
   }
 
+  needsToSearchTopStories(searchTerm) {
+    return !this.state.results[searchTerm];
+  }
+
   //concatenate the old and new list of hits from the local stante and new result object
   setSearchTopStories(result) {
     const { hits, page } = result;
+    const { searchKey, results } = this.state;
 
     //when 0, it's a new search request from componentDidMount or onSearchSubmit, the hits are empty. But when click the more button fetch paginated data the page isn't 0
-    const oldHits = page !== 0 ? this.state.result.hits : [];
+    const oldHits =
+      results && results[searchKey] ? results[searchKey].hits : [];
 
     //merge old and new hits from the recent API request
-    const updatedHits = [...oldHits, hits];
+    const updatedHits = [...oldHits, ...hits];
 
     this.setState({
-      result: { hits: updatedHits, page },
+      results: { ...results, [searchKey]: { hits: updatedHits, page } },
     });
   }
 
@@ -60,12 +69,13 @@ class App extends Component {
     )
       .then((response) => response.json())
       .then((result) => this.setSearchTopStories(result))
-      .catch((error) => error);
+      .catch((error) => this.setState({ error }));
   }
 
   //called after the render to fetch data from hacker news api
   componentDidMount() {
     const { searchTerm } = this.state;
+    this.setState({ searchKey: searchTerm });
     this.fetchSearchTopStories(searchTerm);
   }
 
@@ -77,22 +87,35 @@ class App extends Component {
   //fetches results from api when executing a search
   onSearchSubmit(event) {
     const { searchTerm } = this.state;
-    this.fetchSearchTopStories(searchTerm);
+    this.setState({ searchKey: searchTerm });
+
+    if (this.needsToSearchTopStories(searchTerm)) {
+      this.fetchSearchTopStories(searchTerm);
+    }
+
     event.preventDefault();
   }
 
   //remove the item indentified by the id
   onDismiss(id) {
+    const { searchKey, results } = this.state;
+    const { hits, page } = results[searchKey];
+
     const isNotId = (item) => item.objectID !== id;
-    const updatedHits = this.state.result.hits.filter(isNotId);
+    const updatedHits = hits.filter(isNotId);
+
     this.setState({
-      result: { ...this.state.result, hits: updatedHits },
+      results: { ...results, [searchKey]: { hits: updatedHits, page } },
     });
   }
 
   render() {
-    const { searchTerm, result } = this.state;
-    const page = (result && result.page) || 0;
+    const { searchTerm, results, searchKey, error } = this.state;
+    const page =
+      (results && results[searchKey] && results[searchKey].page) || 0;
+    const list =
+      (results && results[searchKey] && results[searchKey].hits) || [];
+
     return (
       <div className="page">
         <div className="interactions">
@@ -103,10 +126,16 @@ class App extends Component {
             Search
           </Search>
         </div>
-        {result && <Table list={result.hits} onDismiss={this.onDismiss} />}
+        {error ? (
+          <div className="interactions">
+            <p>Something went wrong</p>
+          </div>
+        ) : (
+          <Table list={list} onDismiss={this.onDismiss} />
+        )}
         <div className="interactions">
           <Button
-            onClick={() => this.fetchSearchTopStories(searchTerm, page + 1)}>
+            onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
             More
           </Button>
         </div>
