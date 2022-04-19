@@ -179,6 +179,10 @@ const Button = ({ onClick, className = "", children }) => (
     {children}
   </button>
 );
+
+export default App;
+
+export { Button, Search, Table };
 // function App() {
 //   return (
 //     <div className="App">
@@ -315,5 +319,3 @@ return (
 //     );
 //   };
 // }
-
-export default App;
