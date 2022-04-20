@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { sortBy } from "lodash";
 import "./App.css";
 
 const DEFAULT_QUERY = "redux";
@@ -22,6 +23,14 @@ const smallColumn = {
   width: "10%",
 };
 
+const SORTS = {
+  NONE: (list) => list,
+  TITLE: (list) => sortBy(list, "title"),
+  AUTHOR: (list) => sortBy(list, "author"),
+  COMMENTS: (list) => sortBy(list, "num_comments").reverse(),
+  POINTS: (list) => sortBy(list, "points").reverse(),
+};
+
 class App extends Component {
   constructor(props) {
     //sets this.props in constructor
@@ -33,6 +42,7 @@ class App extends Component {
       searchTerm: DEFAULT_QUERY,
       error: null,
       isLoading: false,
+      sortKey: "NONE",
     };
 
     this.needsToSearchTopStories = this.needsToSearchTopStories.bind(this);
@@ -41,6 +51,7 @@ class App extends Component {
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
+    this.onSort = this.onSort.bind(this);
   }
 
   needsToSearchTopStories(searchTerm) {
@@ -113,8 +124,13 @@ class App extends Component {
     });
   }
 
+  onSort(sortKey) {
+    this.setState({ sortKey });
+  }
+
   render() {
-    const { searchTerm, results, searchKey, error, isLoading } = this.state;
+    const { searchTerm, results, searchKey, error, isLoading, sortKey } =
+      this.state;
     const page =
       (results && results[searchKey] && results[searchKey].page) || 0;
     const list =
@@ -135,7 +151,12 @@ class App extends Component {
             <p>Something went wrong</p>
           </div>
         ) : (
-          <Table list={list} onDismiss={this.onDismiss} />
+          <Table
+            list={list}
+            sortKey={sortKey}
+            onSort={this.onSort}
+            onDismiss={this.onDismiss}
+          />
         )}
         <div className="interactions">
           <ButtonWithLoading
@@ -183,9 +204,32 @@ class Search extends Component {
 //   </form>
 // );
 
-const Table = ({ list, onDismiss }) => (
+const Table = ({ list, sortKey, onSort, onDismiss }) => (
   <div className="table">
-    {list.map((item) => (
+    <div className="table-header">
+      <span style={{ width: "40%" }}>
+        <Sort sortKey={"TITLE"} onSort={onSort}>
+          Title
+        </Sort>
+      </span>
+      <span style={{ width: "30%" }}>
+        <Sort sortKey={"AUTHOR"} onSort={onSort}>
+          Author
+        </Sort>
+      </span>
+      <span style={{ width: "10%" }}>
+        <Sort sortKey={"COMMENTS"} onSort={onSort}>
+          Comments
+        </Sort>
+      </span>
+      <span style={{ width: "10%" }}>
+        <Sort sortKey={"POINTS"} onSort={onSort}>
+          Points
+        </Sort>
+      </span>
+      <span style={{ width: "10%" }}>Archive</span>
+    </div>
+    {SORTS[sortKey](list).list.map((item) => (
       <div key={item.objectID} className="table-row">
         <span style={largeColumn}>
           <a href={item.url}>{item.title}</a>
@@ -203,6 +247,12 @@ const Table = ({ list, onDismiss }) => (
       </div>
     ))}
   </div>
+);
+
+const Sort = ({ sortKey, onSort, children }) => (
+  <Button onClick={() => onSort(sortKey)} className="button-inline">
+    {children}
+  </Button>
 );
 
 const Button = ({ onClick, className = "", children }) => (
