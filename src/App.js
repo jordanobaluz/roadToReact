@@ -22,9 +22,6 @@ const smallColumn = {
   width: "10%",
 };
 
-//loading component to indicator a search request submits
-const Loading = () => <div>Loading...</div>;
-
 class App extends Component {
   constructor(props) {
     //sets this.props in constructor
@@ -141,14 +138,10 @@ class App extends Component {
           <Table list={list} onDismiss={this.onDismiss} />
         )}
         <div className="interactions">
-          {isLoading ? (
-            <Loading />
-          ) : (
-            <Button
-              onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
-              More
-            </Button>
-          )}
+          <ButtonWithLoading
+            onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
+            More
+          </ButtonWithLoading>
         </div>
       </div>
     );
@@ -216,6 +209,16 @@ const Button = ({ onClick, className = "", children }) => (
     {children}
   </button>
 );
+
+//loading component to indicator a search request submits
+const Loading = () => <div>Loading...</div>;
+
+const withLoading =
+  (Component) =>
+  ({ isLoading, ...rest }) =>
+    isLoading ? <Loading /> : <Component {...rest} />;
+
+const ButtonWithLoading = withLoading(Button);
 
 export default App;
 
