@@ -16,6 +16,7 @@ describe("App", () => {
     expect(tree).toMatchSnapshot();
   });
 });
+//it and test do the same thing, but make the test more readable
 
 describe("Search", () => {
   it("renders without crashing", () => {
