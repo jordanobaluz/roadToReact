@@ -139,6 +139,7 @@ class App extends Component {
         )}
         <div className="interactions">
           <ButtonWithLoading
+            isLoading={isLoading}
             onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
             More
           </ButtonWithLoading>
