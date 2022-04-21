@@ -256,7 +256,9 @@ class Table extends Component {
               Points
             </Sort>
           </span>
-          <span style={{ width: "10%" }}>Archive</span>
+          <span className="spanAchive" style={{ width: "10%" }}>
+            Archive
+          </span>
         </div>
         {reverseSortedList.map((item) => (
           <div key={item.objectID} className="table-row">

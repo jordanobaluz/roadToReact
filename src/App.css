@@ -52,8 +52,10 @@ button:hover {
   display: flex;
   line-height: 24px;
   font-size: 16px;
-  padding: 0 10px;
+  padding: 5px 10px;
   justify-content: space-between;
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 5px;
 }
 
 .table-empty {
@@ -77,6 +79,16 @@ button:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 5px;
+}
+
+.table-header > span > button {
+  padding: 5px 0px;
+  color: #646464;
+}
+
+.spanAchive {
+  padding: 0;
+  color: #646464;
 }
 
 .table-row > span {
