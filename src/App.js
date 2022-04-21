@@ -31,6 +31,22 @@ const SORTS = {
   POINTS: (list) => sortBy(list, "points").reverse(),
 };
 
+//it's a higher-order function to pass the result to setSearchTopStories based on the fetched result from the API
+const updateSearchTopStoriesState = (hits, page) => (prevState) => {
+  const { searchKey, results } = prevState;
+
+  //when 0, it's a new search request from componentDidMount or onSearchSubmit, the hits are empty. But when click the more button fetch paginated data the page isn't 0
+  const oldHits = results && results[searchKey] ? results[searchKey].hits : [];
+
+  //merge old and new hits from the recent API request
+  const updatedHits = [...oldHits, ...hits];
+
+  this.setState({
+    results: { ...results, [searchKey]: { hits: updatedHits, page } },
+    isLoading: false,
+  });
+};
+
 class App extends Component {
   constructor(props) {
     //sets this.props in constructor
@@ -59,19 +75,7 @@ class App extends Component {
   //concatenate the old and new list of hits from the local stante and new result object
   setSearchTopStories(result) {
     const { hits, page } = result;
-    const { searchKey, results } = this.state;
-
-    //when 0, it's a new search request from componentDidMount or onSearchSubmit, the hits are empty. But when click the more button fetch paginated data the page isn't 0
-    const oldHits =
-      results && results[searchKey] ? results[searchKey].hits : [];
-
-    //merge old and new hits from the recent API request
-    const updatedHits = [...oldHits, ...hits];
-
-    this.setState({
-      results: { ...results, [searchKey]: { hits: updatedHits, page } },
-      isLoading: false,
-    });
+    this.setState(updateSearchTopStoriesState(hits, page));
   }
 
   fetchSearchTopStories(searchTerm, page = 0) {
