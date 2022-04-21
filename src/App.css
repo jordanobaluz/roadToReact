@@ -56,6 +56,9 @@ button:hover {
   justify-content: space-between;
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   border-radius: 5px;
+  position: sticky;
+  top: 0;
+  background-color: #5f5c6d;
 }
 
 .table-empty {
@@ -83,12 +86,16 @@ button:hover {
 
 .table-header > span > button {
   padding: 5px 0px;
-  color: #646464;
+  color: #f4f4f4;
+}
+
+.table-header > span > button:hover {
+  color: #222;
 }
 
 .spanAchive {
   padding: 0;
-  color: #646464;
+  color: #f4f4f4;
 }
 
 .table-row > span {
