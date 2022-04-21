@@ -41,10 +41,10 @@ const updateSearchTopStoriesState = (hits, page) => (prevState) => {
   //merge old and new hits from the recent API request
   const updatedHits = [...oldHits, ...hits];
 
-  this.setState({
+  return {
     results: { ...results, [searchKey]: { hits: updatedHits, page } },
     isLoading: false,
-  });
+  };
 };
 
 class App extends Component {
